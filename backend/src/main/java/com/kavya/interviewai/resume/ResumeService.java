@@ -10,9 +10,11 @@ import java.time.LocalDateTime;
 public class ResumeService {
 
     private final ResumeRepository resumeRepository;
+    private final PdfService pdfService;
 
-    public ResumeService(ResumeRepository resumeRepository) {
+    public ResumeService(ResumeRepository resumeRepository, PdfService pdfService) {
         this.resumeRepository = resumeRepository;
+        this.pdfService = pdfService;
     }
 
     public Resume uploadResume(MultipartFile file) throws Exception {
@@ -29,11 +31,14 @@ public class ResumeService {
         File destinationFile = new File(filePath).getAbsoluteFile();
         file.transferTo(destinationFile);
 
+        String extractedText = pdfService.extractTextFromPdf(destinationFile.getPath());
+
         Resume resume = new Resume();
         resume.setFileName(file.getOriginalFilename());
         resume.setFileType(file.getContentType());
         resume.setFilePath(filePath);
         resume.setUploadedAt(LocalDateTime.now());
+        resume.setExtractedText(extractedText);
 
         return resumeRepository.save(resume);
     }

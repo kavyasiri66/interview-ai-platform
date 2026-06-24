@@ -20,6 +20,9 @@ public class Resume {
 
     private LocalDateTime uploadedAt;
 
+    @Column(columnDefinition = "TEXT")
+    private String extractedText;
+
     public Long getId() {
         return id;
     }
@@ -54,5 +57,11 @@ public class Resume {
 
     public void setUploadedAt(LocalDateTime uploadedAt) {
         this.uploadedAt = uploadedAt;
+    }
+    public String getExtractedText() {
+        return extractedText;
+    }
+    public void setExtractedText(String extractedText) {
+        this.extractedText = extractedText;
     }
 }
