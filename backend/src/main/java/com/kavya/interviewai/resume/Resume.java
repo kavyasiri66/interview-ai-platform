@@ -23,6 +23,9 @@ public class Resume {
     @Column(columnDefinition = "TEXT")
     private String extractedText;
 
+    @Column(columnDefinition = "TEXT")
+    private String aiAnalysis;
+
     public Long getId() {
         return id;
     }
@@ -63,5 +66,12 @@ public class Resume {
     }
     public void setExtractedText(String extractedText) {
         this.extractedText = extractedText;
+    }
+    public String getAiAnalysis() {
+        return aiAnalysis;
+    }
+
+    public void setAiAnalysis(String aiAnalysis) {
+        this.aiAnalysis = aiAnalysis;
     }
 }
