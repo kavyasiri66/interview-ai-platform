@@ -19,24 +19,39 @@ public class OpenAiService {
 
         Map<String, Object> requestBody = Map.of(
                 "model", "gpt-4.1-mini",
-                "input", "Analyze this resume for a technical interview preparation platform. " +
-                        "Return strengths, weaknesses, missing skills, and 5 interview questions:\n\n" +
-                        resumeText
-        );
+                "input", """
+                Analyze this resume for a technical interview preparation platform.
 
-        Map response = restClient.post()
-                .uri("https://api.openai.com/v1/responses")
-                .header("Authorization", "Bearer " + apiKey)
-                .header("Content-Type", "application/json")
-                .body(requestBody)
-                .retrieve()
-                .body(Map.class);
+                Return ONLY valid JSON in this exact format:
+        {
+            "resumeScore": 85,
+                "summary": "short summary here",
+                "strengths": ["strength 1", "strength 2"],
+            "weaknesses": ["weakness 1", "weakness 2"],
+            "missingSkills": ["skill 1", "skill 2"],
+            "interviewQuestions": ["question 1", "question 2", "question 3", "question 4", "question 5"]
+        }
 
-        List output = (List) response.get("output");
-        Map firstOutput = (Map) output.get(0);
-        List content = (List) firstOutput.get("content");
-        Map firstContent = (Map) content.get(0);
+        Do not include markdown.
+        Do not include explanation outside JSON.
 
-        return (String) firstContent.get("text");
-    }
-}
+        Resume:
+        """ + resumeText
+                );
+
+                Map response = restClient.post()
+                        .uri("https://api.openai.com/v1/responses")
+                        .header("Authorization", "Bearer " + apiKey)
+                        .header("Content-Type", "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .body(Map.class);
+
+                List output = (List) response.get("output");
+                Map firstOutput = (Map) output.get(0);
+                List content = (List) firstOutput.get("content");
+                Map firstContent = (Map) content.get(0);
+
+                return (String) firstContent.get("text");
+            }
+        }
