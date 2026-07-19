@@ -5,7 +5,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.List;
 import com.kavya.interviewai.ai.OpenAiService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ResumeService {
@@ -13,6 +16,10 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final PdfService pdfService;
     private final OpenAiService openAiService;
+
+    public List<Resume> getAllResumes() {
+        return resumeRepository.findAllByOrderByUploadedAtDesc();
+    }
 
     public ResumeService(
             ResumeRepository resumeRepository,
@@ -50,5 +57,17 @@ public class ResumeService {
         resume.setAiAnalysis(aiAnalysis);
 
         return resumeRepository.save(resume);
+    }
+    public Resume getResumeById(Long id) {
+        return resumeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Resume not found"
+                ));
+    }
+
+    public void deleteResume(Long id) {
+        Resume resume = getResumeById(id);
+        resumeRepository.delete(resume);
     }
 }
